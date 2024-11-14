@@ -51,6 +51,17 @@ A simple Wi-Fi connected alarm clock built with ESP32, RTC (DS3231), 7-segment d
 5. When the time comes, the buzzer will ring. 🔔
 6. Press the button to stop the alarm. 🚫
 
+## Test Folder 📂
+
+To help you understand and test various components in the project, you can find the necessary test files in the [test folder](https://github.com/eftekin/WiFiAlarmClock/tree/main/test). Below are the available files and what they test:
+
+- **[Demo_Without_Wifi](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/Demo_Without_Wifi)**: A demo that simulates the project’s functionality without requiring a WiFi connection.
+- **[Display_Test](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/Display_Test)**: This file tests and initializes the 7-segment display, checking the number display functionality.
+- **[RTC_Test](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/RTC_Test)**: A test file for the RTC functionality, ensuring that the DS3231 module is working correctly.
+- **[Wemos_Test](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/Wemos_Test)**: A file for testing the Wemos hardware and its integration with the system.
+
+Each of these test files is designed to verify the functionality of a specific component of the project. You can run them to make sure everything is working as expected before diving into the main functionalities.
+
 ## License 📜
 
 This project is licensed under the MIT License.
