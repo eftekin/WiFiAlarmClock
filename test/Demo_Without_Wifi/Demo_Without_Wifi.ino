@@ -2,90 +2,72 @@
 #include <RTClib.h>
 #include <TM1637Display.h>
 
-// Pin definitions
-#define CLK 2          // TM1637 Clock pin
-#define DIO 3          // TM1637 Data pin
-#define BUZZER_PIN 4   // Buzzer pin
-#define BUTTON_PIN 5   // Button pin
+#define CLK 26  // TM1637 Clock pin (IO26)
+#define DIO 25  // TM1637 Data pin (IO25)
 
-// Create TM1637 and RTC objects
-TM1637Display display(CLK, DIO);
 RTC_DS3231 rtc;
+TM1637Display display(CLK, DIO);
 
-// Variables for alarm time
-const int alarmHour = 22;   // Alarm hour (e.g., 22:50)
-const int alarmMinute = 50;
-bool alarmActive = true;    // Variable to check if the alarm is active
+const int buzzerPin = 16; // Buzzer pin (IO16)
+const int buttonPin = 17; // Button pin to stop the alarm
 
-// Define melody and durations
-const int melody[] = {262, 294, 330, 349, 392, 440, 494, 523}; // Frequencies of notes (C4, D4, E4, F4, G4, A4, B4, C5)
-const int noteDurations[] = {500, 500, 500, 500, 500, 500, 500, 500}; // Duration of each note (in milliseconds)
+int alarmHour = 21;    // Default alarm time set to 07:00
+int alarmMinute = 49;  // Default alarm minute
+bool alarmSet = true; // Alarm initially set to true for testing
+
+unsigned long lastButtonPress = 0;  // To store the last button press time
+const unsigned long debounceDelay = 200; // Debounce delay (200 milliseconds)
+bool alarmTriggered = false;  // Flag to track if alarm is currently ringing
 
 void setup() {
-  // Start serial communication
-  Serial.begin(9600);
+  Serial.begin(115200);
 
-  // Initialize RTC
+  // Initialize RTC module
+  Wire.begin(18, 19); // RTC: SDA = IO18, SCL = IO19
   if (!rtc.begin()) {
     Serial.println("RTC module not found!");
     while (1);
   }
 
-  // Initialize TM1637 display
-  display.setBrightness(7);  // Maximum brightness
+  // Buzzer and button pin setup
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
 
-  // Set up buzzer and button pins
-  pinMode(BUZZER_PIN, OUTPUT);
-  digitalWrite(BUZZER_PIN, LOW);  // Start with buzzer off
-  pinMode(BUTTON_PIN, INPUT_PULLUP);  // Use internal pull-up resistor
-}
+  // Set display brightness
+  display.setBrightness(0x0f);
 
-void playMelody() {
-  unsigned long startMillis = millis();  // Start the timer
-  int noteCount = sizeof(melody) / sizeof(melody[0]);
-
-  for (int i = 0; i < noteCount; i++) {
-    // Stop melody if button is pressed
-    if (digitalRead(BUTTON_PIN) == LOW) {
-      alarmActive = false;  // Deactivate the alarm
-      noTone(BUZZER_PIN);   // Turn off the buzzer
-      Serial.println("Alarm Stopped!");
-      return;
-    }
-
-    tone(BUZZER_PIN, melody[i]);         // Play note on the buzzer
-    delay(noteDurations[i]);             // Wait for the note duration
-    noTone(BUZZER_PIN);                  // Stop the note
-    delay(50);                           // Short delay between notes
-
-    // Stop the alarm if 1 minute has passed
-    if (millis() - startMillis >= 60000) {
-      noTone(BUZZER_PIN);                // Turn off the buzzer
-      alarmActive = false;               // Deactivate the alarm
-      Serial.println("Alarm duration expired, stopping!");
-      return;
-    }
-  }
+  // Print the initial alarm time to serial
+  Serial.print("Alarm set to: ");
+  Serial.print(alarmHour);
+  Serial.print(":");
+  Serial.println(alarmMinute);
 }
 
 void loop() {
-  // Get the time from RTC
+  // Get the current time from the RTC
   DateTime now = rtc.now();
+  int currentHour = now.hour();
+  int currentMinute = now.minute();
 
-  // Display the hour and minute in "HHMM" format
-  int displayTime = (now.hour() * 100) + now.minute();
+  // Display the current time on the 7-segment display
+  int displayTime = (currentHour * 100) + currentMinute;
   display.showNumberDecEx(displayTime, 0b01000000, true);
 
-  // Print the time to the serial monitor
-  Serial.print("Time: ");
-  Serial.print(now.hour());
-  Serial.print(":");
-  Serial.println(now.minute());
-
-  // Check if it's time for the alarm
-  if (alarmActive && now.hour() == alarmHour && now.minute() == alarmMinute) {
-    playMelody();  // Play the melody
+  // Check if it's time to trigger the alarm
+  if (alarmSet && currentHour == alarmHour && currentMinute == alarmMinute && !alarmTriggered) {
+    digitalWrite(buzzerPin, HIGH); // Activate the buzzer
+    Serial.println("Alarm triggered!");
+    alarmTriggered = true;  // Set the flag to indicate the alarm is ringing
   }
 
-  delay(1000);  // Check every second
+  // Check if the button is pressed to stop the alarm (single press detection with debounce)
+  if (alarmTriggered && digitalRead(buttonPin) == LOW && (millis() - lastButtonPress) > debounceDelay) {
+    lastButtonPress = millis();  // Update last button press time
+    digitalWrite(buzzerPin, LOW); // Turn off the buzzer
+    alarmSet = false;             // Completely disable the alarm
+    alarmTriggered = false;       // Reset the alarm triggered flag
+    Serial.println("Alarm stopped and disabled.");
+  }
+
+  delay(100); // Short delay before the next loop iteration
 }
