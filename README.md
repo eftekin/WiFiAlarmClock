@@ -1,74 +1,83 @@
 # Wi-Fi Alarm Clock ⏰
 
-A simple Wi-Fi connected alarm clock built with ESP32, RTC (DS3231), 7-segment display, and a buzzer. Set the alarm time through a web interface and stop it with a button. 🚨
+A **Wi-Fi-enabled alarm clock** powered by the Wemos D1 R32 (ESP32), DS3231 RTC module, TM1637 7-segment display, and a buzzer. Set the alarm remotely via a sleek web interface and stop it with a button. 🚨
 
-## Features:
+---
 
-- **Wi-Fi Connectivity** 🌐: Connect to your network for easy remote alarm setup.
-- **RTC Module** 🕒: Accurate timekeeping with DS3231.
-- **7-Segment Display** 💡: Displays current time in a 24-hour format.
-- **Web Interface** 💻: Set alarm time via an easy-to-use webpage.
-- **Alarm Function** 🔊: Buzzer sounds when the alarm time is reached.
-- **Button to Stop** 🔘: Turn off the alarm by pressing the button.
+## 🌟 Features
 
-## Components Used:
+- **Wi-Fi Connectivity**: Set alarms remotely through a browser.
+- **Accurate Timekeeping**: Powered by the DS3231 RTC module.
+- **Clear Display**: 7-segment display shows the current time in 24-hour format.
+- **Web Interface**: User-friendly webpage for alarm setup.
+- **Alarm Functionality**: Buzzer rings when the alarm time is reached.
+- **Stop Button**: Press a physical button to turn off the alarm.
 
-- **ESP32**: Microcontroller running the project.
-- **DS3231 RTC**: Precise timekeeping.
-- **TM1637 7-Segment Display**: Displays the time.
-- **Buzzer**: Sounds the alarm.
-- **Button**: Stop the alarm.
+---
 
-## Setup & Installation 🛠️
+## 🛠️ Getting Started
 
-### Hardware Setup:
+### 1. Arduino IDE Setup
 
-1. **RTC Module (DS3231)**:
-   - SDA to IO18
-   - SCL to IO19
-2. **TM1637 Display**:
-   - CLK to IO26
-   - DIO to IO25
-3. **Buzzer**: Connect to IO16.
-4. **Button**: Connect to IO17.
+1. Open the Arduino IDE and navigate to **Settings**.
+2. In the **Additional Board Manager URLs** field, add the following link:  
+   [https://espressif.github.io/arduino-esp32/package_esp32_index.json](https://espressif.github.io/arduino-esp32/package_esp32_index.json)
+3. Go to **Tools > Board > Boards Manager**, search for `ESP32`, and install the package.
 
-### Software Setup:
+### 2. Hardware Connections
 
-1. Install libraries:
+Connect the components as follows:
+
+| Component             | Pin on ESP32             |
+| --------------------- | ------------------------ |
+| **RTC (DS3231)**      | SDA to IO18, SCL to IO19 |
+| **7-Segment Display** | CLK to IO26, DIO to IO25 |
+| **Buzzer**            | IO16                     |
+| **Button**            | IO17                     |
+
+Refer to the included **circuit diagram** below for a visual guide.
+
+### 3. Uploading the Code
+
+1. Install the following libraries in Arduino IDE:
+
    - `Wire.h`
    - `RTClib.h`
    - `WiFi.h`
    - `WebServer.h`
    - `TM1637Display.h`
-2. Replace Wi-Fi credentials (`ssid` & `password`) with your network details.
 
-### How to Use:
+2. Replace `ssid` and `password` in the code with your Wi-Fi credentials.
+3. Upload the code to your Wemos D1 R32 board.
 
-1. Upload the code to your ESP32 via Arduino IDE.
-2. Open the serial monitor to get the IP address of the ESP32.
-3. Enter the IP address in a browser to access the web interface.
-4. Set the alarm time on the webpage.
-5. When the time comes, the buzzer will ring. 🔔
-6. Press the button to stop the alarm. 🚫
+### 4. Running the Project
 
-## Test Folder 📂
+1. Open the **Serial Monitor** to find the ESP32's IP address.
+2. Enter the IP address in your browser to access the alarm setup interface.
+3. Set the desired alarm time through the webpage.
+4. When the time is reached, the buzzer will sound. Press the button to stop it.
 
-To help you understand and test various components in the project, you can find the necessary test files in the [test folder](https://github.com/eftekin/WiFiAlarmClock/tree/main/test). Below are the available files and what they test:
+---
 
-- **[Demo_Without_Wifi](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/Demo_Without_Wifi)**: A demo that simulates the project’s functionality without requiring a WiFi connection.
-- **[Display_Test](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/Display_Test)**: This file tests and initializes the 7-segment display, checking the number display functionality.
-- **[RTC_Test](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/RTC_Test)**: A test file for the RTC functionality, ensuring that the DS3231 module is working correctly.
-- **[Wemos_Test](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/Wemos_Test)**: A file for testing the Wemos hardware and its integration with the system.
+## 🔌 Circuit Diagram
 
-Each of these test files is designed to verify the functionality of a specific component of the project. You can run them to make sure everything is working as expected before diving into the main functionalities.
+Below is the **circuit diagram** created in Fritzing. Click the image to view or download the file:
 
-## License 📜
+<img src="https://github.com/user-attachments/assets/e6565743-5f55-40f7-8bf3-edaf4fd62857" alt="smartwifi" width="400"/>
 
-This project is licensed under the MIT License.
+---
 
-## Acknowledgments 🙏
+## 📂 Test Files
 
-- ESP32 for IoT applications.
-- DS3231 for accurate time.
-- TM1637 for the display.
-- Arduino community for open-source libraries.
+Test individual components of the project using these files from the [test folder](https://github.com/eftekin/WiFiAlarmClock/tree/main/test):
+
+- **[Demo_Without_Wifi](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/Demo_Without_Wifi)**: Simulates the project’s functionality without Wi-Fi.
+- **[Display_Test](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/Display_Test)**: Tests the 7-segment display.
+- **[RTC_Test](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/RTC_Test)**: Ensures the RTC module works correctly.
+- **[Wemos_Test](https://github.com/eftekin/WiFiAlarmClock/blob/main/test/Wemos_Test)**: Tests Wemos hardware integration.
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**.
